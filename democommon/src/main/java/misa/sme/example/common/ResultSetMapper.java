@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -30,11 +28,12 @@ public class ResultSetMapper<T> {
 						T bean = (T) outputClass.newInstance();
 						
 							for (Field field : fields) {
+								field.setAccessible(true);
 //								Duyệt qua các trường của đối tượng xem những trường nào được map
 								if (field.isAnnotationPresent(Col.class)) {
-									Column column = field.getAnnotation(Column.class);
+									Col column = field.getAnnotation(Col.class);
 									//lấy giá trị của trường đó
-									String value=rs.getString(column.name().toLowerCase());
+									String value=rs.getString(field.getName().toLowerCase());
 								field.set(bean, field.getType().getConstructor(String.class).newInstance(value));
 								}
 							

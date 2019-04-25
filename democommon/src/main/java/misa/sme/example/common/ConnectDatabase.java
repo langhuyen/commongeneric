@@ -11,21 +11,20 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 public class ConnectDatabase {
 
-	@Value(value="{database.class}")
+	@Value("${database.class}")
 	private String classDriver;
-	@Value(value="{database.url}")
+	@Value("${database.url}")
 	private String url;
-	@Value(value="{database.username}")
+	@Value("${database.username}")
 	private String username;
-	@Value(value="{database.password}")
+	@Value("${database.password}")
 	private String password;
 	
 	
 	@Bean
-	@Scope("request")
 	public Connection getConnection() {
 		try {
-			Class.forName(classDriver);
+			Class.forName("org.mariadb.jdbc.Driver");
 		    return  DriverManager.getConnection(url,username, password);
 		} catch (Exception e) {
 			e.printStackTrace();

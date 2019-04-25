@@ -23,7 +23,7 @@ public class AbstractDaoImp<ID extends Serializable,T> implements GenericDao<ID,
 	
 	protected Class<T> persistentClass;
 	
-	AbstractDaoImp(){
+	public AbstractDaoImp(){
 		/*
 		 * Lay doi so thu hai la T(class)
 		 */
@@ -44,16 +44,24 @@ public class AbstractDaoImp<ID extends Serializable,T> implements GenericDao<ID,
 		 */
 		StringBuilder sql=new StringBuilder("select * from ");
 		sql.append(getPersistentClassName());
+		PreparedStatement pre=null;
+		List<T> lst=new ArrayList<T>();
 		try {
-			PreparedStatement pre=connectionDatabase.prepareStatement(sql.toString());
+			pre=connectionDatabase.prepareStatement(sql.toString());
 			ResultSet resultSet = pre.executeQuery();
 			ResultSetMapper<T> resultSetMapper=new ResultSetMapper<>();
-			List<T> lst=resultSetMapper.mapRersultSetToObject(resultSet,persistentClass);
-			return lst;
+			lst=resultSetMapper.mapRersultSetToObject(resultSet,persistentClass);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		try {
+			pre.close();
+			connectionDatabase.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return lst;
 	}
 
 }
